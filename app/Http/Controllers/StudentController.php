@@ -38,17 +38,17 @@ class StudentController extends Controller
         ]);
         $StudentName = $request->input('StudentName');
         $StudentEmail = $request->input('StudentEmail');
-        $StudentGeder = $request->input('StudentGender');
+        $StudentGender = $request->input('StudentGender');
         $ClassRoomID = $request->input('ClassRoomID');
         $validatedData = $request->validate([
             'StudentName' => 'required',
-            'StudentEmail' > 'required',
+            'StudentEmail' => 'required',
         ]);
 
         DB::table('students')->insert([
             'StudentName' => $StudentName,
             'StudentEmail' => $StudentEmail,
-            'StudentGender' => $StudentGeder,
+            'StudentGender' => $StudentGender,
             'ClassRoomID' => $ClassRoomID
         ]);
 
@@ -69,7 +69,12 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        //
+        //$classrooms = DB::table('classrooms')->get();
+        $classrooms = Classroom::all();
+        return view('students.edit', [
+            'classrooms' => $classrooms,
+            'student' => $student,
+        ]);
     }
 
     /**
@@ -77,7 +82,24 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        //
+        $StudentName = $request->input('StudentName');
+        $StudentEmail = $request->input('StudentEmail');
+        $StudentGender = $request->input('StudentGender');
+        $ClassRoomID = $request->input('ClassRoomID');
+
+        $validateData = $request->validate([
+            'StudentName' => 'required',
+            'StudentEmail' => 'required',
+        ]);
+
+        $student->update([
+            'StudentName' => $StudentName,
+            'StudentEmail' => $StudentEmail,
+            'StudentGender' => $StudentGender,
+            'ClassRoomID' => $ClassRoomID,
+        ]);
+
+        return redirect()->route('students.index')->with('success', 'Student Data has been updated successfully');
     }
 
     /**
@@ -85,6 +107,7 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $student->delete();
+        return redirect()->route('students.index')->with('success', 'Student Data Deleted successfully');
     }
 }
